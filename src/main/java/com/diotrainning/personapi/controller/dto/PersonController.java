@@ -1,6 +1,6 @@
 package com.diotrainning.personapi.controller.dto;
 
-import com.diotrainning.personapi.dto.MessageReaponseDTO;
+import com.diotrainning.personapi.dto.MessageResponseDTO;
 import com.diotrainning.personapi.dto.PersonDTO;
 import com.diotrainning.personapi.exception.PersonNotFoundException;
 import com.diotrainning.personapi.service.PersonService;
@@ -24,7 +24,7 @@ public class PersonController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MessageReaponseDTO createPerson(@RequestBody @Valid PersonDTO personDTO) {
+    public MessageResponseDTO createPerson(@RequestBody @Valid PersonDTO personDTO) {
         return personService.createPerson(personDTO);
     }
 
@@ -36,6 +36,11 @@ public class PersonController {
     @GetMapping("/{id}")
     public PersonDTO findById(@PathVariable Long id) throws PersonNotFoundException  {
         return personService.findById(id);
+    }
+
+    @PutMapping("/{id}")
+    public MessageResponseDTO updateById(@PathVariable Long id, @RequestBody @Valid PersonDTO personDTO) throws PersonNotFoundException {
+        return personService.updateById(id, personDTO);
     }
 
     @DeleteMapping("/{id}")

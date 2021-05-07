@@ -1,6 +1,6 @@
 package com.diotrainning.personapi.service;
 
-import com.diotrainning.personapi.dto.MessageReaponseDTO;
+import com.diotrainning.personapi.dto.MessageResponseDTO;
 import com.diotrainning.personapi.dto.PersonDTO;
 import com.diotrainning.personapi.entity.Person;
 import com.diotrainning.personapi.exception.PersonNotFoundException;
@@ -21,15 +21,12 @@ public class PersonService {
 
     private final PersonMapper personMapper;
 
-    public MessageReaponseDTO createPerson(PersonDTO personDTO) {
+    public MessageResponseDTO createPerson(PersonDTO personDTO) {
         Person person = personMapper.toModel(personDTO);
 
         Person savedPerson = personRepository.save(person);
 
-        return MessageReaponseDTO
-                .builder()
-                .message("Created person with Id " + savedPerson.getId())
-                .build();
+        return createMessageResponse(savedPerson.getId(), "Created person with Id ");
     }
 
     public List<PersonDTO> listAll() {
@@ -52,10 +49,25 @@ public class PersonService {
         personRepository.deleteById(id);
     }
 
-    private Person getPersonOrThrow(Long id) throws PersonNotFoundException {
-        Person person = personRepository.findById(id)
-                .orElseThrow(() -> new PersonNotFoundException(id));
+    public MessageResponseDTO updateById(Long id, PersonDTO personDTO) throws PersonNotFoundException {
+        getPersonOrThrow(id);
 
-        return person;
+        Person person = personMapper.toModel(personDTO);
+
+        personRepository.save(person);
+
+        return createMessageResponse(id, "Update person with Id ");
+    }
+
+    private MessageResponseDTO createMessageResponse(Long id, String message) {
+        return MessageResponseDTO
+                .builder()
+                .message(message + id)
+                .build();
+    }
+
+    private Person getPersonOrThrow(Long id) throws PersonNotFoundException {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
     }
 }
